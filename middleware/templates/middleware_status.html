@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Middleware Status Monitor</title>
+</head>
+<body>
+  <h1>Middleware Status Monitor</h1>
+
+  <h2>Check Token Status</h2>
+  <input type="text" id="tokenInput" placeholder="Enter Token">
+  <button onclick="checkToken()">Check Token</button>
+  <p id="tokenStatus"></p>
+
+  <h2>View Registered Clients</h2>
+  <button onclick="viewRegisteredClients()">View Clients</button>
+  <ul id="clientList"></ul>
+
+  <h2>Check Vote Status</h2>
+  <input type="text" id="clientIdVote" placeholder="Enter Client ID">
+  <button onclick="checkVoteStatus()">Check Vote</button>
+  <p id="voteStatus"></p>
+
+  <script>
+    async function checkToken() {
+      const token = document.getElementById('tokenInput').value;
+      const response = await fetch('/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token })
+      });
+      const data = await response.json();
+      document.getElementById('tokenStatus').innerText = response.ok ? 'Valid Token' : `Error: ${data.error}`;
+    }
+
+    async function viewRegisteredClients() {
+      const response = await fetch('/registeredClients');
+      const data = await response.json();
+      const clientList = document.getElementById('clientList');
+      clientList.innerHTML = '';
+      data.clients.forEach(client => {
+        const listItem = document.createElement('li');
+        listItem.innerText = `Client ID: ${client.clientID}, URL: ${client.url}, Author: ${client.author}`;
+        clientList.appendChild(listItem);
+      });
+    }
+
+    async function checkVoteStatus() {
+      const clientID = document.getElementById('clientIdVote').value;
+      const response = await fetch(`/voteStatus/${clientID}`);
+      const data = await response.json();
+      document.getElementById('voteStatus').innerText = response.ok ? `Votes: ${data.votes}` : `Error: ${data.error}`;
+    }
+  </script>
+</body>
+</html>
