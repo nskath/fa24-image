@@ -11,7 +11,7 @@
   <!-- Image Upload -->
   <form id="uploadForm" enctype="multipart/form-data">
     <label for="image">Upload your image:</label>
-    <input type="file" id="image" name="image" accept="image/png">
+    <input type="file" id="image" name="image" accept="image/png" required>
     <button type="submit">Upload Image</button>
   </form>
 
@@ -33,5 +33,168 @@
       }
     };
   </script>
+
+  <!-- Add Client -->
+  <h2>Add Client</h2>
+  <button id="addClientButton">Add Client</button>
+  <script>
+    document.getElementById("addClientButton").onclick = async function () {
+      const response = await fetch('/addClient', {
+        method: 'PUT'
+      });
+
+      if (response.ok) {
+        alert("Client added successfully.");
+      } else {
+        alert("Failed to add client.");
+      }
+    };
+  </script>
+
+  <!-- Get Image -->
+  <h2>Get Image</h2>
+  <button id="getImageButton">Get Image</button>
+  <script>
+    document.getElementById("getImageButton").onclick = async function () {
+      const response = await fetch('/image', {
+        method: 'GET'
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const img = document.createElement("img");
+        img.src = url;
+        document.body.appendChild(img);
+      } else {
+        alert("Image not approved or not found.");
+      }
+    };
+  </script>
+
+  <!-- Get Tile -->
+  <h2>Get Tile</h2>
+  <form id="getTileForm">
+    <label for="tileX">Tile X:</label>
+    <input type="number" id="tileX" name="tileX" required>
+    <label for="tileY">Tile Y:</label>
+    <input type="number" id="tileY" name="tileY" required>
+    <button type="submit">Get Tile</button>
+  </form>
+  <script>
+    document.getElementById("getTileForm").onsubmit = async function (e) {
+      e.preventDefault();
+      const xloc = document.getElementById('tileX').value;
+      const yloc = document.getElementById('tileY').value;
+      const response = await fetch(`/tile?xloc=${xloc}&yloc=${yloc}`, {
+        method: 'GET'
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const img = document.createElement("img");
+        img.src = url;
+        document.body.appendChild(img);
+      } else {
+        alert("Tile not found or image not approved.");
+      }
+    };
+  </script>
+
+  <!-- Get Votes -->
+  <h2>Get Votes</h2>
+  <button id="getVotesButton">Get Votes</button>
+  <script>
+    document.getElementById("getVotesButton").onclick = async function () {
+      const response = await fetch('/votes', {
+        method: 'GET'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Votes: " + data.votes);
+      } else {
+        alert("Failed to retrieve votes.");
+      }
+    };
+  </script>
+
+  <!-- Put Votes -->
+  <h2>Put Votes</h2>
+  <form id="putVotesForm">
+    <label for="newVotes">New Votes:</label>
+    <input type="number" id="newVotes" name="newVotes" required>
+    <button type="submit">Update Votes</button>
+  </form>
+  <script>
+    document.getElementById("putVotesForm").onsubmit = async function (e) {
+      e.preventDefault();
+      const votes = document.getElementById('newVotes').value;
+
+      const response = await fetch('/votes', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ authToken: 'YOUR_AUTH_TOKEN', votes: votes })
+      });
+
+      if (response.ok) {
+        alert("Votes updated successfully.");
+      } else {
+        alert("Failed to update votes.");
+      }
+    };
+  </script>
+
+  <!-- Cast Vote -->
+  <h2>Cast Vote</h2>
+  <form id="castVoteForm">
+    <label for="voteX">Vote X:</label>
+    <input type="number" id="voteX" name="voteX" required>
+    <label for="voteY">Vote Y:</label>
+    <input type="number" id="voteY" name="voteY" required>
+    <button type="submit">Cast Vote</button>
+  </form>
+  <script>
+    document.getElementById("castVoteForm").onsubmit = async function (e) {
+      e.preventDefault();
+      const xloc = document.getElementById('voteX').value;
+      const yloc = document.getElementById('voteY').value;
+
+      const response = await fetch(`/votingfor/${xloc}/${yloc}`, {
+        method: 'PUT'
+      });
+
+      if (response.ok) {
+        alert("Vote cast successfully.");
+      } else {
+        alert("Voting error.");
+      }
+    };
+  </script>
+
+  <!-- Update Tile -->
+  <h2>Update Tile</h2>
+  <button id="updateTileButton">Update Tile</button>
+  <script>
+    document.getElementById("updateTileButton").onclick = async function () {
+      const response = await fetch('/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ authToken: 'YOUR_AUTH_TOKEN', neighbors: [] })
+      });
+
+      if (response.ok) {
+        alert("Tile updated successfully.");
+      } else {
+        alert("Failed to update tile.");
+      }
+    };
+  </script>
+
 </body>
 </html>
