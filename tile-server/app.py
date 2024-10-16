@@ -2,9 +2,14 @@ import requests
 from flask import Flask, jsonify, render_template, request, send_file
 import random
 import os
+from dotenv import load_dotenv
 from PIL import Image
 
+load_dotenv()
+
 app = Flask(__name__)
+
+
 
 global votes
 votes = 0

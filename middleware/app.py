@@ -31,6 +31,7 @@ def register_client():
         'author': data.get('author')
     }
     registered_clients.append(client)
+    print(registered_clients)
     return jsonify({'message': 'Client registered'}), 200
 
 @app.route('/registeredClients', methods=['GET'])
