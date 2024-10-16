@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--GPT GENERATED CSS SHEET -->
+<html>
+<head>
+    <title>Button Actions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .status {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <script>
+        function addClient() {
+            fetch('/addClient', { method: 'PUT' })
+            .then(response => {
+                const statusElement = document.getElementById('client-status');
+                if (response.ok) {
+                    statusElement.innerHTML = `Status Code: ${response.status}`;
+                    statusElement.classList.add('success');
+                } else {
+                    statusElement.innerHTML = `Error: ${response.status}`;
+                    statusElement.classList.add('error');
+                }
+                statusElement.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function addImage() {
+            const formData = new FormData();
+            const imageFile = document.getElementById('image-file').files[0];
+            formData.append('image', imageFile);
+
+            fetch('/addImage', { method: 'PUT', body: formData })
+            .then(response => {
+                const statusElement = document.getElementById('image-status');
+                if (response.ok) {
+                    statusElement.innerHTML = `Status Code: ${response.status}`;
+                    statusElement.classList.add('success');
+                } else {
+                    statusElement.innerHTML = `Error: ${response.status}`;
+                    statusElement.classList.add('error');
+                }
+                statusElement.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        function voteFor() {
+            const vote_x = document.getElementById('vote_x').value;
+            const vote_y = document.getElementById('vote_y').value;
+
+            fetch(`/votingfor/${vote_x}/${vote_y}`, { method: 'PUT' })
+                .then(response => {
+                    const statusElement = document.getElementById('voting-status');
+                    if (response.ok) {
+                        statusElement.innerHTML = `Voted successfully for ${vote_x} and ${vote_y}`;
+                        statusElement.classList.add('success');
+                    } else {
+                        statusElement.innerHTML = `Error: ${response.status}`;
+                        statusElement.classList.add('error');
+                    }
+                    statusElement.style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Actions</h1>
+    <div>
+        <button onclick="addClient()">Add Client</button>
+        <div id="client-status" class="status"></div>
+    </div>
+    <div>
+        <input type="file" id="image-file">
+        <button onclick="addImage()">Add Image</button>
+        <div id="image-status" class="status"></div>
+    </div>
+    <div>
+        <h2>Vote for X and Y</h2>
+        <label for="vote_x">Vote X:</label>
+        <input type="text" id="vote_x"><br><br>
+        <label for="vote_y">Vote Y:</label>
+        <input type="text" id="vote_y"><br><br>
+        <button onclick="voteFor()">Vote</button>
+        <div id="voting-status" class="status"></div>
+    </div>
+</body>
+</html>
